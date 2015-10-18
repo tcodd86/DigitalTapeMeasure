@@ -2,12 +2,13 @@
 #define trigPin 9
 #define echoPin 8
 #define button 2
+#define units 3
 
 long duration;
 long distance;
-int buttonState;
+bool siUnits;
 
-LiquidCrystal lcd(13, 11, 5, 4, 3, 6);
+LiquidCrystal lcd(13, 11, 5, 4, 7, 6);
 
 void setup() {  
   lcd.begin(16, 2);
@@ -15,8 +16,10 @@ void setup() {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   pinMode(button, INPUT);
-  buttonState = 0;
+  pinMode(distance, INPUT);
+  siUnits = true;
   attachInterrupt(digitalPinToInterrupt(button), Measure, RISING);
+  attachInterrupt(digitalPinToInterrupt(units), Units, RISING);
   PrintLCD("Ready to Measure!", "");
 }
 
@@ -30,9 +33,12 @@ void Measure(){
   delayMicroseconds(10); // Added this line
   digitalWrite(trigPin, LOW);
   duration = pulseIn(echoPin, HIGH);
-  distance = (duration/2) / 29.1;
-  PrintLCD("Distance (in cm)", String(distance));
-  Serial.println(distance);
+  if(siUnits){
+    WriteSI();
+  }
+  else{
+    WriteMetric();
+  }
 }
 
 void PrintLCD(String top, String bottom){
@@ -41,4 +47,31 @@ void PrintLCD(String top, String bottom){
   lcd.print(top);
   lcd.setCursor(0, 1);
   lcd.print(bottom);
+}
+
+void Units(){
+  if(siUnits){
+    siUnits = false;
+    if(duration != 0){
+      WriteMetric();
+    }
+  }
+  else{
+    siUnits = true;
+    if(duration != 0){
+      WriteSI();
+    }
+  }
+}
+
+void WriteSI(){
+  double distanceInch = (duration * 6.75198)/1000;
+  int feet = floor(distanceInch/12);
+  float inch = distanceInch - feet*12.0;
+  PrintLCD("Distance (in ft)", String(feet) + "ft " + String(inch, 1) + " inches");
+}
+
+void WriteMetric(){
+  distance = (duration/2) / 29.1;
+  PrintLCD("Distance:", String(distance) + " cm");
 }
