@@ -5,7 +5,6 @@
 #define units 3
 
 long duration;
-long distance;
 bool siUnits;
 
 LiquidCrystal lcd(13, 11, 5, 4, 7, 6);
@@ -16,7 +15,7 @@ void setup() {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   pinMode(button, INPUT);
-  pinMode(distance, INPUT);
+  pinMode(units, INPUT);
   siUnits = true;
   attachInterrupt(digitalPinToInterrupt(button), Measure, RISING);
   attachInterrupt(digitalPinToInterrupt(units), Units, RISING);
@@ -68,10 +67,10 @@ void WriteSI(){
   double distanceInch = (duration * 6.75198)/1000;
   int feet = floor(distanceInch/12);
   float inch = distanceInch - feet*12.0;
-  PrintLCD("Distance (in ft)", String(feet) + "ft " + String(inch, 1) + " inches");
+  PrintLCD("Distance:", String(feet) + "ft " + String(inch, 1) + " inches");
 }
 
 void WriteMetric(){
-  distance = (duration/2) / 29.1;
-  PrintLCD("Distance:", String(distance) + " cm");
+  double distanceCM = (duration/2) / 29.1375;
+  PrintLCD("Distance:", String(distanceCM, 1) + " cm");
 }
