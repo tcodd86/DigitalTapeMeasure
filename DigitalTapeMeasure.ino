@@ -4,6 +4,10 @@
 #define button 2
 #define units 3
 
+double fps = 1125.33;
+double mps = 343.0;
+double fudgeFactor = 1.0;
+double timeConversion = 2000000.0;
 long duration;
 bool siUnits;
 
@@ -27,7 +31,7 @@ void loop() {
 
 void Measure(){
   digitalWrite(trigPin, LOW);  // Added this line
-  delayMicroseconds(2); // Added this line
+  delayMicroseconds(10); // Added this line
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10); // Added this line
   digitalWrite(trigPin, LOW);
@@ -64,13 +68,13 @@ void Units(){
 }
 
 void WriteSI(){
-  double distanceInch = (duration * 6.75198)/1000;
+  double distanceInch = (duration * fps * 12.0)/timeConversion * fudgeFactor;
   int feet = floor(distanceInch/12);
   float inch = distanceInch - feet*12.0;
   PrintLCD("Distance:", String(feet) + "ft " + String(inch, 1) + " inches");
 }
 
 void WriteMetric(){
-  double distanceCM = (duration/2) / 29.1375;
+  double distanceCM = (duration * mps * 100)/timeConversion*fudgeFactor;
   PrintLCD("Distance:", String(distanceCM, 1) + " cm");
 }
