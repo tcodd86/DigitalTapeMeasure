@@ -4,11 +4,11 @@
 #define button 2
 #define units 3
 
-double fps = 1125.33;
-double mps = 343.0;
-double fudgeFactor = 1.0;
-double timeConversion = 2000000.0;
-long duration;
+double fps = 1125.33;  //speed of sound in feet per second
+double mps = 343.0;  //speed of sound in meters per second
+double fudgeFactor = 1.0;  //scaling factor to account for systematic bias
+double timeConversion = 2000000.0;//conversion from microseconds with factor of 2 for round trip
+long duration;//variable to store length of time
 bool siUnits;
 
 LiquidCrystal lcd(13, 11, 5, 4, 7, 6);
